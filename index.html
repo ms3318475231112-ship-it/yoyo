@@ -1,0 +1,483 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style><link rel="manifest" href="manifest.webmanifest"><meta name="theme-color" content="#2F6DB5"><link rel="icon" href="icon-192.png"><link rel="apple-touch-icon" href="icon-192.png"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"></head><body>
+<title>تسعير الدهان</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap">
+<style>
+/* Layout: two-page mobile tool. Page 1 = input cards, page 2 = full results table. Ink blue + paint-tin yellow for fields. */
+:root{
+  --bg:#F5F7FB; --surface:#FFFFFF; --ink:#1F2A3A; --muted:#6B7788; --line:#DFE5EE;
+  --accent:#2F6DB5; --accent-ink:#FFFFFF; --field:#FFF7DD; --field-line:#F0DC9C;
+  --head:#E8F0FA; --good:#2E8B5E; --danger:#C2503A;
+  --font:'IBM Plex Sans Arabic','Segoe UI',Tahoma,Arial,sans-serif;
+  color-scheme:light;
+}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--font);font-size:15px;line-height:1.55;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:0;margin:0;height:100%;overflow:hidden}
+html{height:100%}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--bg)}
+.wrap{max-width:760px;margin:0 auto;height:100%;display:flex;flex-direction:column}
+main{flex:1;min-height:0;overflow-y:auto;overscroll-behavior:contain;padding-bottom:14px}
+.bar{flex:none;padding:10px 0 4px;background:var(--bg);border-top:1px solid var(--line)}
+.bar .btn{width:100%;margin:0}
+.bar.two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+header.top{flex:none;background:var(--bg);padding:10px 0 8px}
+.brand{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:8px}
+.brand h1{margin:0}
+.brand svg{height:58px;width:auto;flex:none;direction:ltr}
+h1{margin:0 0 8px;font-size:19px;font-weight:700;letter-spacing:0;color:var(--accent)}
+.tabs{display:grid;grid-template-columns:1fr 1fr;background:var(--head);border-radius:12px;padding:4px;gap:4px}
+.tabs button{border:0;background:transparent;color:var(--muted);font:600 15px var(--font);padding:10px;border-radius:9px;cursor:pointer}
+.tabs button[aria-selected="true"]{background:var(--surface);color:var(--accent);box-shadow:0 1px 3px rgba(31,42,58,.12)}
+button:focus-visible,input:focus-visible,select:focus-visible,summary:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+section.card{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:16px;margin-top:14px;box-shadow:0 1px 4px rgba(31,42,58,.06)}
+h2{font-size:15px;margin:0 0 12px;font-weight:700}
+.note{color:var(--muted);font-size:13px;margin:0 0 12px}
+label{display:block;font-size:13px;color:var(--muted);margin-bottom:4px}
+input,select{width:100%;font:500 16px var(--font);color:var(--ink);background:var(--field);border:1px solid var(--field-line);border-radius:10px;padding:10px 12px;min-height:44px}
+input[type=number]{direction:ltr;text-align:center;font-variant-numeric:tabular-nums}
+select{appearance:auto}
+.area{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:end}
+.area input{font-size:26px;font-weight:700;min-height:58px}
+.unit{font-size:15px;color:var(--muted);padding-bottom:16px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.step{border:1px solid var(--line);border-radius:12px;padding:12px;margin-top:10px}
+.step:first-of-type{margin-top:0}
+.step-h{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:10px}
+.badge{font-weight:700;color:var(--accent);font-variant-numeric:tabular-nums}
+.btn{border:1px solid var(--line);background:var(--surface);color:var(--ink);font:600 14px var(--font);border-radius:10px;padding:10px 14px;min-height:44px;cursor:pointer}
+.btn.primary{background:var(--accent);color:var(--accent-ink);border-color:var(--accent);width:100%;font-size:16px;margin-top:16px}
+.btn.danger{color:var(--danger)}
+.btn.small{min-height:36px;padding:6px 12px}
+.row-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
+details summary{cursor:pointer;font-weight:700;font-size:15px;min-height:32px}
+details[open] summary{margin-bottom:12px}
+.banner{background:var(--head);border-radius:10px;padding:10px 12px;font-size:13px;color:var(--muted);margin-top:4px}
+/* results */
+.hero{background:linear-gradient(135deg,#2F6DB5,#5A9BE0);color:var(--accent-ink);border-radius:14px;padding:10px 14px;margin-top:10px;display:flex;justify-content:space-between;align-items:center;gap:10px}
+.hero small{display:block;opacity:.85;font-size:13px}
+.hero .big{font-size:30px;font-weight:700;font-variant-numeric:tabular-nums;line-height:1.2}
+.hero .sub{display:flex;flex-direction:column;gap:0;font-size:12.5px;opacity:.95;text-align:left}
+.tablewrap{margin-top:10px;border:1px solid var(--line);border-radius:12px;background:var(--surface);overflow:hidden}
+table{border-collapse:collapse;table-layout:fixed;width:100%;font-size:clamp(8px,2.4vw,12px);line-height:1.3;font-variant-numeric:tabular-nums}
+th,td{border:1px solid var(--line);padding:4px 1px;text-align:center;overflow:hidden;white-space:nowrap}
+th{white-space:normal;line-height:1.25}
+th,.lbl{background:var(--head);font-weight:700}
+td.name{background:var(--field);font-weight:600}
+td.lbl{white-space:normal}
+td.final{font-weight:700;font-size:1.25em;background:linear-gradient(135deg,#2F6DB5,#5A9BE0);color:var(--accent-ink)}
+td.empty{background:transparent;border-color:transparent}
+.exportbar{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px}
+.exportbar .btn{width:100%}
+.btn.solid{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+#preview{margin-top:12px}
+#preview img{width:100%;border:1px solid var(--line);border-radius:10px;background:#fff}
+.copybar{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
+.copybar .btn{flex:1 1 140px}
+textarea.manual{width:100%;min-height:150px;margin-top:10px;direction:rtl;font:13px var(--font);background:var(--surface);color:var(--ink);border:1px solid var(--line);border-radius:10px;padding:10px}
+.toast{margin-top:10px;font-size:13px;color:var(--good);min-height:20px}
+@media (prefers-reduced-motion:no-preference){.hero .big{transition:opacity .2s}}
+</style>
+
+<div class="wrap" dir="rtl" lang="ar">
+  <header class="top">
+    <div class="brand"><h1>تسعير الدهان</h1><svg id="brandLogo" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 544.7 197.2" role="img" aria-label="Aya Nazif" focusable="false"><defs><path id="ayaT" d="M26.964143426294818 109.07569721115539Q26.964143426294818 101.06772908366534 31.804780876494025 87.56175298804781Q36.64541832669323 74.05577689243029 44.53386454183267 60.43027888446216Q38.55776892430279 60.78884462151395 35.09163346613546 62.22310756972112Q31.625498007968126 63.65737051792829 30.549800796812747 66.64541832669323Q31.027888446215137 66.64541832669323 31.565737051792826 67.84063745019921Q32.103585657370516 69.03585657370519 32.103585657370516 70.35059760956176Q32.103585657370516 72.50199203187252 30.191235059760956 73.7569721115538Q28.278884462151396 75.01195219123507 25.41035856573705 75.01195219123507Q22.06374501992032 75.01195219123507 20.03187250996016 73.21912350597611Q18.0 71.42629482071715 18.0 68.07968127490041Q18.0 64.01593625498009 21.167330677290835 60.66932270916335Q24.334661354581673 57.32270916334662 29.952191235059757 55.35059760956176Q35.569721115537845 53.3784860557769 42.38247011952191 53.3784860557769Q44.89243027888446 53.3784860557769 48.59760956175299 53.737051792828694Q58.398406374501995 38.199203187251 69.33466135458168 28.3386454183267Q80.27091633466136 18.478087649402397 90.19123505976097 18.478087649402397Q95.92828685258965 18.478087649402397 99.63346613545818 20.15139442231076L80.86852589641435 108.1195219123506H63.657370517928285L72.86055776892431 64.73306772908367Q68.4382470119522 62.70119521912351 64.73306772908367 61.74501992031873Q61.027888446215144 60.78884462151395 56.844621513944226 60.43027888446216Q50.03187250996016 75.13147410358567 45.669322709163346 90.49003984063746Q41.30677290836653 105.84860557768926 41.30677290836653 115.05179282868527Q41.30677290836653 119.59362549800798 42.9800796812749 121.74501992031874Q38.55776892430279 121.74501992031874 35.211155378486055 121.02788844621514Q31.864541832669325 120.31075697211156 29.41434262948207 117.56175298804781Q26.964143426294818 114.81274900398407 26.964143426294818 109.07569721115539ZM80.86852589641435 26.964143426294825Q75.72908366533865 29.713147410358573 70.17131474103586 37.183266932270925Q64.61354581673307 44.65338645418327 59.354581673306775 55.290836653386464Q67.9601593625498 56.964143426294825 73.93625498007968 59.474103585657375ZM102.02390438247012 126.40637450199205Q102.02390438247012 119.59362549800798 107.5219123505976 115.47011952191235Q113.0199203187251 111.34661354581674 121.50597609561753 108.597609561753L122.9402390438247 102.14342629482073Q119.47410358565737 105.96812749003985 115.88844621513945 107.40239043824701Q112.30278884462152 108.83665338645419 108.59760956175299 108.83665338645419Q102.86055776892431 108.83665338645419 99.33466135458167 105.25099601593627Q95.80876494023904 101.66533864541833 95.80876494023904 94.49402390438247Q95.80876494023904 91.50597609561754 96.76494023904382 86.72509960159363L104.89243027888446 48.3585657370518H122.10358565737052L113.4980079681275 88.99601593625499Q113.13944223107569 90.43027888446215 113.13944223107569 91.98406374501992Q113.13944223107569 97.24302788844622 116.72509960159363 97.24302788844622Q119.83266932270917 97.24302788844622 122.22310756972112 94.55378486055778Q124.61354581673307 91.86454183266933 126.04780876494024 87.44223107569722L134.41434262948206 48.3585657370518H151.62549800796813L139.79282868525897 103.81673306772909Q145.52988047808765 101.90438247011953 148.996015936255 98.07968127490041Q152.4621513944223 94.25498007968129 154.85258964143426 86.72509960159363H159.87250996015936Q156.64541832669323 97.36254980079681 151.14741035856574 102.32270916334662Q145.64940239043824 107.28286852589642 138.71713147410358 109.07569721115539L136.9243027888446 117.68127490039842Q134.53386454183266 129.27490039840637 128.67729083665338 133.6374501992032Q122.82071713147411 138.0 115.41035856573706 138.0Q109.67330677290836 138.0 105.84860557768924 135.01195219123508Q102.02390438247012 132.02390438247014 102.02390438247012 126.40637450199205ZM119.59362549800797 118.03984063745021 120.31075697211156 114.57370517928288Q108.59760956175299 118.8764940239044 108.59760956175299 124.73306772908367Q108.59760956175299 126.28685258964144 109.67330677290838 127.4820717131474Q110.74900398406375 128.67729083665338 112.66135458167331 128.67729083665338Q114.69322709163347 128.67729083665338 116.60557768924303 125.92828685258965Q118.5179282868526 123.1792828685259 119.59362549800797 118.03984063745021ZM153.2988047808765 89.59362549800798Q153.2988047808765 80.74900398406375 156.82470119521912 71.00796812749005Q160.35059760956176 61.26693227091634 167.34262948207171 54.51394422310757Q174.33466135458167 47.76095617529881 184.0159362549801 47.76095617529881Q188.9163346613546 47.76095617529881 191.30677290836655 49.43426294820718Q193.69721115537848 51.107569721115546 193.69721115537848 53.85657370517929V54.693227091633474L195.01195219123505 48.3585657370518H212.22310756972112L203.6175298804781 88.99601593625499Q203.1394422310757 90.78884462151396 203.1394422310757 92.82071713147411Q203.1394422310757 97.9601593625498 208.0398406374502 97.9601593625498Q211.38645418326695 97.9601593625498 213.8366533864542 94.85258964143426Q216.28685258964146 91.74501992031873 217.72111553784862 86.72509960159363H222.74103585657372Q218.3187250996016 99.63346613545818 211.80478087649402 104.23505976095618Q205.29083665338646 108.83665338645419 198.71713147410358 108.83665338645419Q193.69721115537848 108.83665338645419 190.64940239043824 106.02788844621514Q187.60159362549803 103.2191235059761 187.003984063745 97.84063745019921Q183.5378486055777 102.74103585657372 179.29482071713147 105.78884462151396Q175.05179282868525 108.83665338645419 169.19521912350598 108.83665338645419Q162.3824701195219 108.83665338645419 157.8406374501992 104.17529880478088Q153.2988047808765 99.51394422310759 153.2988047808765 89.59362549800798ZM186.88446215139442 86.72509960159363 192.62151394422312 59.71314741035857Q192.62151394422312 58.159362549800804 191.42629482071715 56.66533864541833Q190.23107569721117 55.171314741035864 187.72111553784862 55.171314741035864Q182.9402390438247 55.171314741035864 179.11553784860558 60.72908366533865Q175.29083665338646 66.28685258964144 173.1394422310757 74.11553784860558Q170.98804780876495 81.94422310756973 170.98804780876495 87.9203187250996Q170.98804780876495 93.8964143426295 172.72111553784862 95.56972111553786Q174.45418326693226 97.24302788844622 176.9641434262948 97.24302788844622Q179.95219123505976 97.24302788844622 182.8804780876494 94.43426294820718Q185.80876494023906 91.62549800796813 186.88446215139442 86.72509960159363ZM272.7011952191235 26.247011952191244Q264.57370517928285 29.115537848605584 260.33067729083666 35.27091633466136Q256.0876494023904 41.42629482071713 256.0876494023904 50.151394422310766Q256.0876494023904 53.976095617529886 256.9243027888446 57.14342629482073Q257.7609561752988 60.31075697211156 259.31474103585657 62.34262948207172Q251.66533864541833 62.34262948207172 248.0199203187251 59.17529880478088Q244.37450199203187 56.007968127490045 244.37450199203187 49.43426294820718Q244.37450199203187 41.06772908366534 249.27490039840637 33.83665338645419Q254.17529880478088 26.605577689243034 262.54183266932273 22.302788844621517Q270.9083665338645 18.0 280.70916334661354 18.0Q283.45816733067727 18.0 285.49003984063745 18.358565737051798Q287.52191235059763 18.717131474103596 290.1513944223108 19.673306772908376L304.49402390438246 83.61752988047809L317.8804780876494 18.717131474103596H329.47410358565736L309.99203187251 108.1195219123506H293.49800796812747L279.63346613545815 48.83665338645419L266.00796812749 108.1195219123506H254.65338645418328ZM321.9442231075697 89.59362549800798Q321.9442231075697 80.74900398406375 325.47011952191235 71.00796812749005Q328.99601593625493 61.26693227091634 335.9880478087649 54.51394422310757Q342.9800796812749 47.76095617529881 352.66135458167327 47.76095617529881Q357.5617529880478 47.76095617529881 359.95219123505973 49.43426294820718Q362.3426294820717 51.107569721115546 362.3426294820717 53.85657370517929V54.693227091633474L363.65737051792826 48.3585657370518H380.8685258964143L372.2629482071713 88.99601593625499Q371.7848605577689 90.78884462151396 371.7848605577689 92.82071713147411Q371.7848605577689 97.9601593625498 376.68525896414343 97.9601593625498Q380.0318725099601 97.9601593625498 382.4820717131474 94.85258964143426Q384.93227091633463 91.74501992031873 386.3665338645418 86.72509960159363H391.3864541832669Q386.9641434262948 99.63346613545818 380.45019920318725 104.23505976095618Q373.93625498007964 108.83665338645419 367.3625498007968 108.83665338645419Q362.3426294820717 108.83665338645419 359.2948207171314 106.02788844621514Q356.2470119521912 103.2191235059761 355.64940239043824 97.84063745019921Q352.1832669322709 102.74103585657372 347.9402390438247 105.78884462151396Q343.69721115537845 108.83665338645419 337.8406374501992 108.83665338645419Q331.0278884462151 108.83665338645419 326.4860557768924 104.17529880478088Q321.9442231075697 99.51394422310759 321.9442231075697 89.59362549800798ZM355.52988047808765 86.72509960159363 361.2669322709163 59.71314741035857Q361.2669322709163 58.159362549800804 360.0717131474103 56.66533864541833Q358.87649402390434 55.171314741035864 356.3665338645418 55.171314741035864Q351.5856573705179 55.171314741035864 347.76095617529876 60.72908366533865Q343.93625498007964 66.28685258964144 341.78486055776887 74.11553784860558Q339.63346613545815 81.94422310756973 339.63346613545815 87.9203187250996Q339.63346613545815 93.8964143426295 341.3665338645418 95.56972111553786Q343.0996015936255 97.24302788844622 345.60956175298804 97.24302788844622Q348.59760956175296 97.24302788844622 351.5258964143426 94.43426294820718Q354.45418326693226 91.62549800796813 355.52988047808765 86.72509960159363ZM416.8446215139442 54.812749003984074H410.1513944223108Q406.804780876494 54.812749003984074 405.19123505976097 55.171314741035864Q403.5776892430279 55.529880478087655 403.5776892430279 56.725099601593634Q403.5776892430279 56.964143426294825 404.23505976095623 57.26294820717132Q404.8924302788845 57.561752988047814 404.8924302788845 59.35458167330678Q404.8924302788845 62.46215139442232 402.9800796812749 64.07569721115539Q401.06772908366537 65.68924302788845 398.4382470119522 65.68924302788845Q396.16733067729086 65.68924302788845 394.5537848605578 64.31474103585658Q392.9402390438247 62.94023904382471 392.9402390438247 60.43027888446216Q392.9402390438247 57.920318725099605 394.6733067729084 55.051792828685265Q396.40637450199205 52.183266932270925 399.5737051792829 50.270916334661365Q402.7410358565737 48.3585657370518 406.804780876494 48.3585657370518H437.52191235059763L408.2390438247012 98.9163346613546Q408.9561752988048 98.9163346613546 410.8685258964144 99.15537848605578Q414.9322709163347 99.63346613545818 417.32270916334664 99.63346613545818Q422.46215139442234 99.63346613545818 422.9402390438247 97.24302788844622Q421.8645418326693 97.12350597609563 421.2669322709163 96.46613545816734Q420.66932270916334 95.80876494023906 420.66932270916334 94.73306772908367Q420.66932270916334 92.82071713147411 422.46215139442234 91.20717131474105Q424.2549800796813 89.59362549800798 427.36254980079684 89.59362549800798Q429.99203187251 89.59362549800798 431.30677290836655 91.14741035856575Q432.6215139442231 92.70119521912352 432.6215139442231 95.33067729083666Q432.6215139442231 98.199203187251 430.82868525896413 101.18725099601593Q429.0358565737052 104.17529880478088 425.68924302788844 106.14741035856574Q422.34262948207174 108.1195219123506 418.0398406374502 108.1195219123506H386.36653386454185ZM448.0398406374502 32.46215139442232Q448.0398406374502 28.517928286852595 450.78884462151393 25.70916334661355Q453.5378486055777 22.900398406374507 457.48207171314743 22.900398406374507Q461.42629482071715 22.900398406374507 464.23505976095623 25.70916334661355Q467.04382470119526 28.517928286852595 467.04382470119526 32.46215139442232Q467.04382470119526 36.40637450199203 464.23505976095623 39.15537848605578Q461.42629482071715 41.90438247011953 457.48207171314743 41.90438247011953Q453.5378486055777 41.90438247011953 450.78884462151393 39.15537848605578Q448.0398406374502 36.40637450199203 448.0398406374502 32.46215139442232ZM436.56573705179284 94.49402390438247Q436.56573705179284 91.50597609561754 437.52191235059763 86.72509960159363L445.64940239043824 48.3585657370518H462.8605577689243L454.2549800796813 88.99601593625499Q453.7768924302789 90.78884462151396 453.7768924302789 92.82071713147411Q453.7768924302789 95.21115537848607 454.9123505976096 96.22709163346615Q456.04780876494027 97.24302788844622 458.6772908366534 97.24302788844622Q462.14342629482076 97.24302788844622 465.1314741035857 94.31474103585658Q468.1195219123506 91.38645418326695 469.4342629482072 86.72509960159363H474.4541832669323Q470.0318725099602 99.63346613545818 463.0996015936255 104.23505976095618Q456.16733067729086 108.83665338645419 449.35458167330677 108.83665338645419Q443.6175298804781 108.83665338645419 440.0916334661355 105.25099601593627Q436.56573705179284 101.66533864541833 436.56573705179284 94.49402390438247ZM444.57370517928285 125.09163346613546Q444.57370517928285 119.95219123505977 447.203187250996 116.60557768924303Q449.83266932270914 113.2589641434263 454.01593625498003 111.28685258964144Q458.199203187251 109.31474103585658 465.1314741035857 107.16334661354583L479.59362549800795 38.91633466135458Q481.9840637450199 27.442231075697222 488.0199203187251 23.019920318725106Q494.0557768924303 18.59760956175299 501.34661354581675 18.59760956175299Q506.9641434262948 18.59760956175299 511.207171314741 22.24302788844622Q515.4501992031873 25.888446215139453 515.4501992031873 31.50597609561754Q515.4501992031873 34.254980079681275 515.0916334661355 36.40637450199203H509.47410358565736Q509.71314741035854 33.77689243027889 509.71314741035854 33.1792828685259Q509.71314741035854 31.266932270916342 508.398406374502 30.191235059760963Q507.0836653386454 29.115537848605584 505.17131474103587 29.115537848605584Q502.6613545816733 29.115537848605584 500.27091633466136 31.32669322709164Q497.8804780876494 33.53784860557769 496.804780876494 38.91633466135458L494.77290836653384 48.3585657370518H503.49800796812747L502.6613545816733 53.139442231075705H493.81673306772905L480.0717131474104 117.68127490039842Q477.6812749003984 129.27490039840637 471.8247011952191 133.6374501992032Q465.9681274900398 138.0 458.67729083665336 138.0Q453.0597609561753 138.0 448.81673306772905 134.35458167330677Q444.57370517928285 130.70916334661356 444.57370517928285 125.09163346613546ZM462.7410358565737 118.03984063745021 464.2948207171315 111.10756972111555Q457.9601593625498 113.2589641434263 454.55378486055776 116.06772908366534Q451.1474103585657 118.8764940239044 451.1474103585657 123.4183266932271Q451.1474103585657 124.85258964143426 452.5816733067729 126.10756972111554Q454.0159362549801 127.36254980079683 455.9282868525896 127.36254980079683Q460.70916334661354 127.36254980079683 462.7410358565737 118.03984063745021Z"/><linearGradient id="ayaFace" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFF3B0"/><stop offset="0.45" stop-color="#FFD54A"/><stop offset="1" stop-color="#E9A100"/></linearGradient><linearGradient id="ayaSw" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#FFD54A"/><stop offset="1" stop-color="#F2A900"/></linearGradient><clipPath id="ayaTop"><rect x="0" y="0" width="544.7" height="73.2"/></clipPath></defs><g stroke-linejoin="round"><g stroke="#0F2B57" stroke-width="3"><use href="#ayaT" x="11.20" y="11.20" fill="rgb(16,42,92)"/><use href="#ayaT" x="10.40" y="10.40" fill="rgb(18,47,99)"/><use href="#ayaT" x="9.60" y="9.60" fill="rgb(21,52,107)"/><use href="#ayaT" x="8.80" y="8.80" fill="rgb(24,58,114)"/><use href="#ayaT" x="8.00" y="8.00" fill="rgb(27,63,122)"/><use href="#ayaT" x="7.20" y="7.20" fill="rgb(29,68,129)"/><use href="#ayaT" x="6.40" y="6.40" fill="rgb(32,74,137)"/><use href="#ayaT" x="5.60" y="5.60" fill="rgb(35,79,144)"/><use href="#ayaT" x="4.80" y="4.80" fill="rgb(38,85,152)"/><use href="#ayaT" x="4.00" y="4.00" fill="rgb(40,90,159)"/><use href="#ayaT" x="3.20" y="3.20" fill="rgb(43,95,167)"/><use href="#ayaT" x="2.40" y="2.40" fill="rgb(46,101,174)"/><use href="#ayaT" x="1.60" y="1.60" fill="rgb(49,106,182)"/><use href="#ayaT" x="0.80" y="0.80" fill="rgb(52,112,190)"/></g><path d="M28.0,158.0 C172.4,144.0 365.0,166.0 509.5,148.0" transform="translate(11.20,11.20)" fill="none" stroke="rgb(16,42,92)" stroke-width="7" stroke-linecap="round"/><path d="M28.0,158.0 C172.4,144.0 365.0,166.0 509.5,148.0" transform="translate(10.40,10.40)" fill="none" stroke="rgb(18,47,99)" stroke-width="7" stroke-linecap="round"/><path d="M28.0,158.0 C172.4,144.0 365.0,166.0 509.5,148.0" transform="translate(9.60,9.60)" fill="none" stroke="rgb(21,52,107)" stroke-width="7" stroke-linecap="round"/><path d="M28.0,158.0 C172.4,144.0 365.0,166.0 509.5,148.0" transform="translate(8.80,8.80)" fill="none" stroke="rgb(24,58,114)" stroke-width="7" stroke-linecap="round"/><path d="M28.0,158.0 C172.4,144.0 365.0,166.0 509.5,148.0" transform="translate(8.00,8.00)" fill="none" stroke="rgb(27,63,122)" stroke-width="7" stroke-linecap="round"/><path d="M28.0,158.0 C172.4,144.0 365.0,166.0 509.5,148.0" transform="translate(7.20,7.20)" fill="none" stroke="rgb(29,68,129)" stroke-width="7" stroke-linecap="round"/><path d="M28.0,158.0 C172.4,144.0 365.0,166.0 509.5,148.0" transform="translate(6.40,6.40)" fill="none" stroke="rgb(32,74,137)" stroke-width="7" stroke-linecap="round"/><path d="M28.0,158.0 C172.4,144.0 365.0,166.0 509.5,148.0" transform="translate(5.60,5.60)" fill="none" stroke="rgb(35,79,144)" stroke-width="7" stroke-linecap="round"/><path d="M28.0,158.0 C172.4,144.0 365.0,166.0 509.5,148.0" transform="translate(4.80,4.80)" fill="none" stroke="rgb(38,85,152)" stroke-width="7" stroke-linecap="round"/><path d="M28.0,158.0 C172.4,144.0 365.0,166.0 509.5,148.0" transform="translate(4.00,4.00)" fill="none" stroke="rgb(40,90,159)" stroke-width="7" stroke-linecap="round"/><path d="M28.0,158.0 C172.4,144.0 365.0,166.0 509.5,148.0" transform="translate(3.20,3.20)" fill="none" stroke="rgb(43,95,167)" stroke-width="7" stroke-linecap="round"/><path d="M28.0,158.0 C172.4,144.0 365.0,166.0 509.5,148.0" transform="translate(2.40,2.40)" fill="none" stroke="rgb(46,101,174)" stroke-width="7" stroke-linecap="round"/><path d="M28.0,158.0 C172.4,144.0 365.0,166.0 509.5,148.0" transform="translate(1.60,1.60)" fill="none" stroke="rgb(49,106,182)" stroke-width="7" stroke-linecap="round"/><path d="M28.0,158.0 C172.4,144.0 365.0,166.0 509.5,148.0" transform="translate(0.80,0.80)" fill="none" stroke="rgb(52,112,190)" stroke-width="7" stroke-linecap="round"/><path d="M28.0,158.0 C172.4,144.0 365.0,166.0 509.5,148.0" fill="none" stroke="url(#ayaSw)" stroke-width="7" stroke-linecap="round"/><use href="#ayaT" fill="url(#ayaFace)" stroke="#8A5A00" stroke-width="2.2" paint-order="stroke"/><use href="#ayaT" fill="#FFFFFF" opacity="0.38" clip-path="url(#ayaTop)"/></g></svg></div>
+    <div class="tabs" role="tablist">
+      <button id="tab-input" role="tab" aria-selected="true">الإدخال</button>
+      <button id="tab-result" role="tab" aria-selected="false">النتيجة</button>
+    </div>
+  </header>
+
+  <main id="page-input">
+    <section class="card">
+      <h2>المساحة</h2>
+      <div class="area">
+        <div><label for="area">المساحة بالمتر</label><input id="area" type="number" inputmode="decimal" min="0" step="any"></div>
+        <span class="unit">متر</span>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>خطوات الدهان</h2>
+      <p class="note">كل خطوة لها صنف وقيمها الخاصة. الصنف يتكرر زي ما تحب، مثلاً البلاستيك مرتين بنسب مختلفة. الأرقام الحالية أمثلة، غيّرها أو امسحها.</p>
+      <div id="steps"></div>
+      <div class="row-actions">
+        <button class="btn" id="addStep">+ إضافة خطوة</button>
+        <button class="btn danger" id="clearAll">مسح كل الخطوات</button>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>الأجر والربح</h2>
+      <div class="grid2">
+        <div><label for="wage">الأجر اليومي (ج)</label><input id="wage" type="number" inputmode="decimal" min="0" step="any"></div>
+        <div><label for="profit">نسبة الأرباح %</label><input id="profit" type="number" inputmode="decimal" min="0" step="any"></div>
+        <div style="grid-column:1/-1"><label for="other">الأعمال الأخرى (ج)</label><input id="other" type="number" inputmode="decimal" min="0" step="any"></div>
+      </div>
+    </section>
+
+    <section class="card">
+      <details>
+        <summary>إعدادات التقريب</summary>
+        <div class="grid2">
+          <div><label for="kgStep">تقريب الكميات (ك)</label>
+            <select id="kgStep"><option value="0.5">نص كيلو</option><option value="1">كيلو</option></select></div>
+          
+          <div><label for="dayStep">تقريب الأيام</label>
+            <select id="dayStep"><option value="0.5">نص يوم</option><option value="1">يوم</option></select></div>
+          <div><label for="minDays">أقل أجر (يوم)</label><input id="minDays" type="number" inputmode="decimal" min="0" step="0.5"></div>
+          <div style="grid-column:1/-1"><label for="itemStep">تقريب قيمة البند لأقرب (ج)</label>
+            <select id="itemStep"><option value="10">10</option><option value="50">50</option><option value="100">100</option><option value="1">1</option></select></div>
+        </div>
+      </details>
+    </section>
+
+  </main>
+  <div class="bar" id="bar-input"><button class="btn primary" id="goResult" style="margin:0">عرض النتيجة</button></div>
+
+  <main id="page-result" hidden>
+    <div class="hero" id="hero"></div>
+    <div class="tablewrap" id="tablewrap" tabindex="0" aria-label="جدول النتيجة"></div>
+    <div id="preview" hidden><p class="note" id="previewNote"></p><img id="previewImg" alt="صورة النتيجة"></div>
+    <div class="copybar">
+      <button class="btn" id="copyText">نسخ ملخص نصي</button>
+      <button class="btn" id="copyTsv">نسخ الجدول (للإكسل)</button>
+      <button class="btn" id="backEdit">تعديل البيانات</button>
+    </div>
+    <div class="toast" id="toast" role="status"></div>
+    <textarea class="manual" id="manual" readonly hidden></textarea>
+  </main>
+  <div class="bar two" id="bar-result" hidden>
+    <button class="btn solid" id="savePng">حفظ كصورة</button>
+    <button class="btn solid" id="savePdf">حفظ PDF</button>
+  </div>
+</div>
+
+<script>
+(function(){
+  var ITEMS=['سيلر','معجون','صنفره','بلاستيك','سواحيلى'];
+  var KEY='paint-pricing-v1';
+  var DEFAULT={area:60,wage:250,profit:20,other:0,kgStep:0.5,sandStep:0.5,dayStep:0.5,minDays:1,itemStep:10,
+    rows:[
+      {item:'سيلر',spread:8,ratio:90,price:120,prod:80},
+      {item:'صنفره',spread:10,ratio:100,price:30,prod:40},
+      {item:'بلاستيك',spread:6,ratio:40,price:90,prod:50},
+      {item:'بلاستيك',spread:9,ratio:50,price:110,prod:60},
+      {item:'معجون',spread:2.5,ratio:100,price:40,prod:25},
+      {item:'سواحيلى',spread:7,ratio:20,price:80,prod:30}
+    ]};
+  var S;
+  try{var raw=localStorage.getItem(KEY); S=raw?JSON.parse(raw):null;}catch(e){S=null}
+  if(!S||!S.rows) S=JSON.parse(JSON.stringify(DEFAULT));
+  function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
+  var $=function(id){return document.getElementById(id)};
+
+  // ---------- helpers ----------
+  function num(v){if(v===''||v==null)return null;var n=parseFloat(v);return isNaN(n)?null:n}
+  // الصنفرة: ربع / نص / كيلو حسب الكسر في كل كيلو (0.25، 0.5، أو الكيلو اللي بعده)
+  function sandRound(x){
+    x=Math.round(x*1e6)/1e6; var w=Math.floor(x), f=Math.round((x-w)*1e6)/1e6;
+    if(f===0) return x;
+    return w+(f<=0.25?0.25:(f<=0.5?0.5:1));
+  }
+  function ceilStep(x,s){return Math.ceil(Math.round(x/s*1e6)/1e6)*s}
+  function fmt(n,d){return n.toLocaleString('en-US',{minimumFractionDigits:d,maximumFractionDigits:d})}
+  function q2(n){return (n==null||n===0)?'-':fmt(n,2)}
+  function money(c){return {p:Math.floor(c/100),q:c%100}}
+
+  // ---------- calculation (same rules as the Excel sheet) ----------
+  function calc(){
+    var area=num(S.area)||0, wage=num(S.wage)||0, pct=num(S.profit)||0, other=num(S.other)||0;
+    var kg=num(S.kgStep)||0.5, dstep=num(S.dayStep)||0.5, minD=num(S.minDays)||0, istep=num(S.itemStep)||10;
+    var steps=S.rows.map(function(r,i){
+      var sp=num(r.spread), ra=num(r.ratio), pr=num(r.price), pd=num(r.prod);
+      var D=(area>0&&sp>0)?area/sp:null;
+      var ratio=ra==null?1:ra/100;
+      var days=(area>0&&pd>0)?Math.max(minD,ceilStep(area/pd,dstep)):null;
+      return {n:i+1,item:r.item,D:D,qty:D==null?0:D*ratio,price:pr||0,days:days,wage:days==null?null:wage,tot:days==null?0:days*wage};
+    });
+    var cols=ITEMS.map(function(it){
+      var sum=0,pw=0;
+      steps.forEach(function(s){if(s.item===it){sum+=s.qty;pw+=s.qty*s.price}});
+      var rounded=sum===0?null:(it==='صنفره'?sandRound(sum):ceilStep(Math.round(sum*1e6)/1e6,kg));
+      var avg=sum>0?pw/sum:null;
+      return {item:it,sum:sum,rounded:rounded,price:avg,cost:(rounded||0)*(avg||0)};
+    });
+    var Wc=Math.round(steps.reduce(function(a,s){return a+s.tot},0)*100);
+    var Mc=Math.round(cols.reduce(function(a,c){return a+c.cost},0)*100);
+    var Oc=Math.round(other*100);
+    var Tc=Wc+Mc+Oc, Pc=Math.round(Tc*pct/100), Cc=Tc+Pc;
+    var x=Cc/100, val=istep>0?Math.ceil(Math.round(x/istep*1e6)/1e6-0.5)*istep:Math.round(x);
+    return {area:area,wage:wage,pct:pct,steps:steps,cols:cols,Wc:Wc,Mc:Mc,Oc:Oc,Tc:Tc,Pc:Pc,Cc:Cc,val:val};
+  }
+
+  // ---------- input page ----------
+  function stepHTML(r,i){
+    var opts=ITEMS.map(function(it){return '<option'+(it===r.item?' selected':'')+'>'+it+'</option>'}).join('');
+    function f(k,label,step){return '<div><label for="s'+i+k+'">'+label+'</label><input id="s'+i+k+'" data-i="'+i+'" data-k="'+k+'" type="number" inputmode="decimal" min="0" step="any" value="'+(r[k]==null?'':r[k])+'"></div>'}
+    return '<div class="step"><div class="step-h"><span class="badge">الخطوة '+(i+1)+'</span>'+
+      '<button class="btn small danger" data-del="'+i+'" aria-label="حذف الخطوة '+(i+1)+'">حذف</button></div>'+
+      '<label for="s'+i+'item">الصنف</label><select id="s'+i+'item" data-i="'+i+'" data-k="item">'+opts+'</select>'+
+      '<div class="grid2" style="margin-top:10px">'+
+      f('spread','متوسط فرد الكيلو (م²/ك)')+f('ratio','نسبة التكوين %')+f('price','سعر الكيلو (ج)')+f('prod','معدل الإنتاج (م²/يوم)')+
+      '</div></div>';
+  }
+  function renderSteps(){
+    $('steps').innerHTML=S.rows.length?S.rows.map(stepHTML).join(''):'<div class="banner">مفيش خطوات. اضغط إضافة خطوة.</div>';
+  }
+  function loadFields(){
+    ['area','wage','profit','other','kgStep','dayStep','minDays','itemStep'].forEach(function(k){
+      var el=$(k); el.value=S[k]==null?'':S[k];
+    });
+  }
+  document.addEventListener('input',function(e){
+    var t=e.target;
+    if(t.dataset&&t.dataset.i!=null){S.rows[+t.dataset.i][t.dataset.k]=(t.dataset.k==='item')?t.value:t.value;save();return}
+    if(t.id&&t.id in S){S[t.id]=t.value;save()}
+  });
+  document.addEventListener('click',function(e){
+    var d=e.target.closest('[data-del]'); if(d){S.rows.splice(+d.dataset.del,1);save();renderSteps();}
+  });
+  $('addStep').onclick=function(){
+    S.rows.push({item:'بلاستيك',spread:'',ratio:100,price:'',prod:''});save();renderSteps();
+    var last=document.querySelector('.step:last-of-type select'); if(last) last.focus();
+  };
+  $('clearAll').onclick=function(){S.rows=[];save();renderSteps()};
+
+  // ---------- result page ----------
+  // ---------- result model (shared by the screen table, the image and the clipboard) ----------
+  var COLW=[60,160,110,114,114,114,114,114,80,90,130]; // design widths, also used as % on screen
+  function mc(c){return c%100?fmt(c/100,2):fmt(c/100,0)}
+  function model(R){
+    var H=[[
+      {c:0,rs:2,t:'م',k:'hd'},{c:1,rs:2,t:'خطوات الدهان',k:'hd'},{c:2,rs:2,t:'الكمية (ك)',k:'hd'},
+      {c:3,span:5,t:'خامات الدهان',k:'hd'},{c:8,span:2,t:'الأجور',k:'hd'},{c:10,rs:2,t:'الإجمالي (ج)',k:'hd'}],
+      ITEMS.map(function(it,i){return {c:3+i,t:it,k:'hd'}}).concat([{c:8,t:'الأيام',k:'hd'},{c:9,t:'الأجر',k:'hd'}])];
+    var B=[];
+    R.steps.forEach(function(s){
+      var r=[{c:0,t:String(s.n)},{c:1,t:s.item,k:'name'},{c:2,t:s.D==null?'-':fmt(s.D,2)}];
+      ITEMS.forEach(function(it,i){r.push({c:3+i,t:s.item===it?q2(s.qty):'-'})});
+      r.push({c:8,t:s.days==null?'-':fmt(s.days,1)},{c:9,t:s.wage==null?'-':fmt(s.wage,0)},{c:10,t:s.tot?mc(Math.round(s.tot*100)):'-'});
+      B.push(r);
+    });
+    function matRow(label,fn,tail){
+      var r=[{c:0,span:3,t:label,k:'lbl'}];
+      R.cols.forEach(function(c,i){r.push({c:3+i,t:fn(c)})});
+      return r.concat(tail);
+    }
+    B.push(matRow('جملة خامات كل صنف (ك)',function(c){return q2(c.sum)},[{c:8,span:3,k:'empty',t:''}]));
+    B.push(matRow('التقريب (لأعلى)',function(c){return c.rounded==null?'-':fmt(c.rounded,2)},[{c:8,span:3,k:'empty',t:''}]));
+    B.push(matRow('أسعار الخامات (ج/ك)',function(c){return c.price==null?'-':(c.price%1?fmt(c.price,2):fmt(c.price,0))},[{c:8,span:3,k:'empty',t:''}]));
+    B.push(matRow('ثمن الخامات (ج)',function(c){return c.cost?fmt(c.cost,0):'-'},[{c:8,span:3,k:'empty',t:''}]));
+    function tot(label,c,k){return [{c:0,span:8,t:label,k:'lbl'},{c:8,span:3,t:c,k:k||''}]}
+    B.push(tot('جملة الأجور',mc(R.Wc)));
+    B.push(tot('جملة ثمن الخامات',mc(R.Mc)));
+    B.push(tot('الأعمال الأخرى',mc(R.Oc)));
+    B.push(tot('جملة الأجور والخامات والأعمال',mc(R.Tc)));
+    B.push(tot('الأرباح % ('+fmt(R.pct,R.pct%1?1:0)+'%)',mc(R.Pc)));
+    B.push(tot('جملة التكاليف',mc(R.Cc)));
+    B.push(tot('قيمة البند',fmt(R.val,0),'final'));
+    return {head:H,body:B};
+  }
+  function esc(t){return String(t).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
+  function rowHTML(r,tag){
+    return '<tr>'+r.map(function(x){
+      var t=(x.k==='hd'||tag==='th')?'th':'td';
+      return '<'+t+(x.span?' colspan="'+x.span+'"':'')+(x.rs?' rowspan="'+x.rs+'"':'')+(x.k&&x.k!=='hd'?' class="'+x.k+'"':'')+'>'+esc(x.t)+'</'+t+'>';
+    }).join('')+'</tr>';
+  }
+  function buildTable(R){
+    var M=model(R), tw=COLW.reduce(function(a,b){return a+b},0);
+    var cg='<colgroup>'+COLW.map(function(w){return '<col style="width:'+(w/tw*100).toFixed(2)+'%">'}).join('')+'</colgroup>';
+    return '<table>'+cg+'<thead>'+M.head.map(function(r){return rowHTML(r)}).join('')+'</thead><tbody>'+M.body.map(function(r){return rowHTML(r)}).join('')+'</tbody></table>';
+  }
+  function textSummary(R){
+    var L=[];
+    L.push('تسعير دهان - المساحة '+fmt(R.area,R.area%1?2:0)+' م');
+    L.push('');L.push('الخامات:');
+    R.cols.forEach(function(c){ if(c.rounded!=null) L.push('- '+c.item+': '+fmt(c.rounded,2)+' ك × '+fmt(c.price,2)+' = '+fmt(c.cost,0)+' ج')});
+    L.push('');L.push('الأجور: '+fmt(R.Wc/100,2)+' ج');
+    L.push('ثمن الخامات: '+fmt(R.Mc/100,2)+' ج');
+    if(R.Oc) L.push('أعمال أخرى: '+fmt(R.Oc/100,2)+' ج');
+    L.push('الأرباح ('+R.pct+'%): '+fmt(R.Pc/100,2)+' ج');
+    L.push('جملة التكاليف: '+fmt(R.Cc/100,2)+' ج');
+    L.push('');L.push('قيمة البند: '+fmt(R.val,0)+' ج');
+    if(R.area>0) L.push('سعر المتر: '+fmt(R.val/R.area,2)+' ج');
+    return L.join('\n');
+  }
+  function tsv(){
+    var M=model(calc()), out=[];
+    M.head.concat(M.body).forEach(function(r){
+      var row=[]; for(var i=0;i<11;i++) row.push('');
+      r.forEach(function(x){row[x.c]=x.t});
+      out.push(row.join('\t'));
+    });
+    return out.join('\n');
+  }
+  function renderResult(){
+    var R=calc();
+    $('hero').innerHTML='<div><small style="display:block;opacity:.85;font-size:12px">قيمة البند</small><div class="big">'+fmt(R.val,0)+' ج</div></div><div class="sub">'+
+      (R.area>0?'<span>سعر المتر: '+fmt(R.val/R.area,2)+' ج</span>':'')+
+      '<span>المساحة: '+fmt(R.area,R.area%1?2:0)+' م</span><span>التكاليف: '+fmt(R.Cc/100,2)+' ج</span></div>';
+    $('tablewrap').innerHTML=buildTable(R);
+    $('manual').hidden=true; $('preview').hidden=true; $('toast').textContent='';
+  }
+  function copy(text,okMsg){
+    function manual(){var m=$('manual');m.value=text;m.hidden=false;m.focus();m.select();$('toast').textContent='انسخ النص من المربع تحت.'}
+    try{
+      navigator.clipboard.writeText(text).then(function(){$('toast').textContent=okMsg;$('manual').hidden=true},manual);
+    }catch(e){manual()}
+  }
+  $('copyText').onclick=function(){copy(textSummary(calc()),'تم نسخ الملخص. الصقه في واتساب أو أي رسالة.')};
+  $('copyTsv').onclick=function(){copy(tsv(),'تم نسخ الجدول. الصقه في إكسل أو جوجل شيت.')};
+  $('backEdit').onclick=function(){go('input')};
+
+  // ---------- export: image + PDF ----------
+  var dl=null;
+  try{ if(window.claude&&claude.use) claude.use('downloads').then(function(d){dl=d},function(){dl=null}) }catch(e){}
+  var INK='#1F2A3A',LINE='#C9D3E0',HEAD='#E8F0FA',FIELD='#FFF7DD',ACC='#2F6DB5';
+  var FF='"IBM Plex Sans Arabic",Tahoma,Arial,sans-serif';
+  function fitText(ctx,t,w,size,weight){
+    var sz=size; ctx.font=weight+' '+sz+'px '+FF;
+    while(ctx.measureText(t).width>w-10&&sz>12){sz-=1;ctx.font=weight+' '+sz+'px '+FF}
+  }
+  function logoImg(){
+    return new Promise(function(res,rej){
+      try{
+        var x=new XMLSerializer().serializeToString(document.getElementById('brandLogo'));
+        var im=new Image(); im.onload=function(){res(im)}; im.onerror=rej;
+        im.src='data:image/svg+xml;charset=utf-8,'+encodeURIComponent(x);
+      }catch(e){rej(e)}
+    });
+  }
+  async function renderCanvas(){
+    try{await document.fonts.load('600 24px "IBM Plex Sans Arabic"');await document.fonts.load('700 24px "IBM Plex Sans Arabic"')}catch(e){}
+    var R=calc(), M=model(R), W=1280, pad=40, TW=W-2*pad, RH=54, HH=52;
+    var tw=COLW.reduce(function(a,b){return a+b},0), cw=COLW.map(function(w){return w*TW/tw});
+    var xr=[]; var acc=W-pad; cw.forEach(function(w){xr.push(acc);acc-=w}); // right edge of each column
+    var topH=290, H=topH+2*HH+M.body.length*RH+70;
+    var cv=document.createElement('canvas'); cv.width=W; cv.height=H;
+    var ctx=cv.getContext('2d'); ctx.direction='rtl'; ctx.textBaseline='middle'; ctx.textAlign='center';
+    ctx.fillStyle='#fff'; ctx.fillRect(0,0,W,H);
+    // title
+    ctx.fillStyle=INK; ctx.textAlign='right'; ctx.font='700 46px '+FF; ctx.fillText('تسعير الدهان',W-pad,pad+30);
+    ctx.fillStyle='#6B7788'; ctx.font='500 26px '+FF;
+    var d=new Date().toLocaleDateString('en-GB');
+    ctx.fillText('المساحة: '+fmt(R.area,R.area%1?2:0)+' م    |    '+d,W-pad,pad+82);
+    try{var lg=await logoImg(); var lw=300, lh=lw*lg.naturalHeight/lg.naturalWidth; ctx.drawImage(lg,pad,pad-6,lw,lh)}catch(e){}
+    // hero
+    ctx.fillStyle=ACC; ctx.beginPath(); ctx.roundRect?ctx.roundRect(pad,pad+115,TW,100,16):ctx.rect(pad,pad+115,TW,100); ctx.fill();
+    ctx.fillStyle='#fff'; ctx.textAlign='right'; ctx.font='500 26px '+FF; ctx.fillText('قيمة البند',W-pad-24,pad+145);
+    ctx.font='700 52px '+FF; ctx.fillText(fmt(R.val,0)+' ج',W-pad-24,pad+188);
+    ctx.textAlign='left'; ctx.font='500 26px '+FF;
+    ctx.fillText(R.area>0?'سعر المتر: '+fmt(R.val/R.area,2)+' ج':'',pad+24,pad+188);
+    ctx.fillText('جملة التكاليف: '+fmt(R.Cc/100,2)+' ج',pad+24,pad+145);
+    // table
+    var y0=topH;
+    function cell(x){ // x: cell model, y: top, rh: row height count
+      return x;
+    }
+    function drawRows(rows,ystart,rowH,isHead){
+      rows.forEach(function(r,ri){
+        r.forEach(function(x){
+          var span=x.span||1, rs=x.rs||1;
+          var right=xr[x.c], left=xr[x.c+span-1]-cw[x.c+span-1];
+          var w=right-left, h=rowH*rs, y=ystart+ri*rowH;
+          var kind=x.k||'';
+          if(kind==='empty'){return}
+          var fill=null, weight=500, size=24, color=INK;
+          if(kind==='hd'||kind==='lbl'){fill=HEAD;weight=700}
+          if(kind==='name'){fill=FIELD;weight=600}
+          if(kind==='final'){fill=ACC;weight=700;size=30;color='#fff'}
+          if(fill){ctx.fillStyle=fill;ctx.fillRect(left,y,w,h)}
+          ctx.strokeStyle=LINE; ctx.lineWidth=1.5; ctx.strokeRect(left,y,w,h);
+          ctx.fillStyle=color; ctx.textAlign='center'; fitText(ctx,x.t,w,size,weight);
+          ctx.fillText(x.t,left+w/2,y+h/2+1);
+        });
+      });
+    }
+    drawRows(M.head,y0,HH,true);
+    drawRows(M.body,y0+2*HH,RH,false);
+    ctx.fillStyle='#6B7788'; ctx.textAlign='center'; ctx.font='500 20px '+FF;
+    ctx.fillText('الأسعار والكميات حسب الإدخال، الكميات بالكيلو',W/2,H-30);
+    return cv;
+  }
+  function canvasBlob(cv,type,q){return new Promise(function(res){cv.toBlob(res,type,q)})}
+  function concat(parts){
+    var n=parts.reduce(function(a,p){return a+p.length},0), o=new Uint8Array(n), k=0;
+    parts.forEach(function(p){o.set(p,k);k+=p.length}); return o;
+  }
+  function makePDF(jpg,w,h){
+    var enc=new TextEncoder(), PW=595, PH=Math.round(PW*h/w), parts=[], offs=[], len=0;
+    function add(u){parts.push(u);len+=u.length}
+    function str(t){add(enc.encode(t))}
+    function obj(n,body){offs[n]=len;str(n+' 0 obj\n'+body+'\nendobj\n')}
+    str('%PDF-1.4\n');
+    obj(1,'<< /Type /Catalog /Pages 2 0 R >>');
+    obj(2,'<< /Type /Pages /Kids [3 0 R] /Count 1 >>');
+    obj(3,'<< /Type /Page /Parent 2 0 R /MediaBox [0 0 '+PW+' '+PH+'] /Resources << /XObject << /Im0 4 0 R >> >> /Contents 5 0 R >>');
+    offs[4]=len; str('4 0 obj\n<< /Type /XObject /Subtype /Image /Width '+w+' /Height '+h+' /ColorSpace /DeviceRGB /BitsPerComponent 8 /Filter /DCTDecode /Length '+jpg.length+' >>\nstream\n'); add(jpg); str('\nendstream\nendobj\n');
+    var content='q '+PW+' 0 0 '+PH+' 0 0 cm /Im0 Do Q';
+    obj(5,'<< /Length '+content.length+' >>\nstream\n'+content+'\nendstream');
+    var xref=len; str('xref\n0 6\n0000000000 65535 f \n');
+    for(var i=1;i<=5;i++) str(String(offs[i]).padStart(10,'0')+' 00000 n \n');
+    str('trailer\n<< /Size 6 /Root 1 0 R >>\nstartxref\n'+xref+'\n%%EOF');
+    return concat(parts);
+  }
+  function showPreview(blob,note){
+    var u=URL.createObjectURL(blob); $('previewImg').src=u; $('previewNote').textContent=note; $('preview').hidden=false;
+    $('preview').scrollIntoView({behavior:'smooth',block:'nearest'});
+  }
+  function say(t){$('toast').textContent=t}
+  async function doExport(kind){
+    var btn=$(kind==='png'?'savePng':'savePdf'); btn.disabled=true; say('جاري التجهيز...');
+    try{
+      var R=calc(), name='تسعير-الدهان-'+fmt(R.area,R.area%1?1:0)+'م';
+      var cv=await renderCanvas(), blob, fname;
+      if(kind==='png'){blob=await canvasBlob(cv,'image/png');fname=name+'.png'}
+      else{
+        var jb=await canvasBlob(cv,'image/jpeg',0.93), jpg=new Uint8Array(await jb.arrayBuffer());
+        blob=new Blob([makePDF(jpg,cv.width,cv.height)],{type:'application/pdf'});fname=name+'.pdf';
+      }
+      if(!dl&&navigator.canShare&&navigator.share){
+        try{
+          var shf=new File([blob],fname,{type:blob.type});
+          if(navigator.canShare({files:[shf]})){await navigator.share({files:[shf],title:fname});say('');return}
+        }catch(er){ if(er&&er.name==='AbortError'){say('');return} }
+      }
+      if(!dl){ // no save support in this view: show the picture so it can be pressed and held
+        var pb=kind==='png'?blob:await canvasBlob(cv,'image/png');
+        showPreview(pb,'الحفظ المباشر مش متاح هنا. اضغط مطولًا على الصورة واختار حفظ.'); say(''); return;
+      }
+      await dl.save({filename:fname,data:blob});
+      say('تم الحفظ.');
+    }catch(e){
+      if(e&&e.code==='declined'){say('')}
+      else if(e&&e.code==='host_unavailable'){say('التطبيق ده مش بيحفظ ملفات. افتح الصفحة من المتصفح.')}
+      else{say('تعذر الحفظ. جرّب مرة تانية.')}
+    }finally{btn.disabled=false}
+  }
+  $('savePng').onclick=function(){doExport('png')};
+  $('savePdf').onclick=function(){doExport('pdf')};
+
+  // ---------- navigation (hash) ----------
+  function go(p){location.hash=p; show(p)}
+  function show(p){
+    var r=p==='result';
+    $('page-input').hidden=r; $('page-result').hidden=!r; $('bar-input').hidden=r; $('bar-result').hidden=!r;
+    $('tab-input').setAttribute('aria-selected',String(!r)); $('tab-result').setAttribute('aria-selected',String(r));
+    if(r) renderResult();
+    (r?$('page-result'):$('page-input')).scrollTop=0;
+  }
+  $('tab-input').onclick=function(){go('input')};
+  $('tab-result').onclick=function(){go('result')};
+  $('goResult').onclick=function(){go('result')};
+  window.addEventListener('hashchange',function(){show(location.hash==='#result'?'result':'input')});
+
+  loadFields(); renderSteps();
+  show(location.hash==='#result'?'result':'input');
+})();
+</script>
+
+<script>if('serviceWorker' in navigator){window.addEventListener('load',function(){navigator.serviceWorker.register('./sw.js').catch(function(){})})}</script>
+</body></html>
